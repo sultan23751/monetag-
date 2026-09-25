@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#070a10">
+<title>AdEarn - Watch & Earn</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="//libtl.com/sdk.js" data-zone="11822707" data-sdk="show_11822707"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{background:#070a10}
+body{min-height:100vh;color:#fff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at 10% 5%,rgba(0,230,168,.13),transparent 28%),radial-gradient(circle at 95% 12%,rgba(91,82,255,.16),transparent 30%),#070a10;overflow-x:hidden}
+button{font-family:inherit}
+.app{width:100%;max-width:520px;margin:auto;padding:18px 15px 35px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:43px;height:43px;display:grid;place-items:center;border-radius:14px;font-size:20px;font-weight:900;background:linear-gradient(135deg,#00e6a8,#6574ff);color:#07100d;box-shadow:0 0 28px rgba(0,230,168,.2)}
+.brand-title{font-size:19px;font-weight:800;letter-spacing:-.4px}
+.brand-subtitle{margin-top:3px;color:#778196;font-size:11px}
+.online{display:flex;align-items:center;padding:8px 11px;border-radius:20px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.075);color:#a4f9df;font-size:10px;font-weight:600}
+.online-dot{width:6px;height:6px;margin-right:6px;border-radius:50%;background:#00e6a8;box-shadow:0 0 9px #00e6a8}
+.profile{display:flex;align-items:center;gap:12px;margin-bottom:15px}
+.avatar{width:53px;height:53px;display:grid;place-items:center;border-radius:17px;background:linear-gradient(145deg,#1b2536,#0e141f);border:1px solid rgba(255,255,255,.08);color:#dffff5;font-size:19px;font-weight:800}
+.profile-name{font-size:16px;font-weight:750}
+.profile-username{margin-top:4px;color:#758096;font-size:11px}
+.balance-card{position:relative;overflow:hidden;padding:22px;border-radius:25px;background:linear-gradient(135deg,rgba(0,230,168,.12),rgba(93,82,255,.10)),rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);margin-bottom:14px}
+.balance-card:before{content:"";position:absolute;width:160px;height:160px;right:-75px;top:-75px;border-radius:50%;background:rgba(0,230,168,.12);filter:blur(12px)}
+.balance-label{position:relative;color:#8791a5;font-size:11px}
+.balance-value{position:relative;margin-top:4px;font-size:40px;line-height:1.1;font-weight:850;letter-spacing:-1.5px}
+.balance-unit{font-size:14px;font-weight:600;color:#8792a5;letter-spacing:0}
+.balance-status{position:relative;margin-top:6px;color:#00e6a8;font-size:10px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.stat-card{padding:16px;border-radius:19px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}
+.stat-icon{width:34px;height:34px;display:grid;place-items:center;margin-bottom:9px;border-radius:11px;background:rgba(255,255,255,.05);font-size:15px}
+.stat-number{font-size:21px;font-weight:800}
+.stat-label{margin-top:3px;color:#707b90;font-size:10px}
+.watch-card{padding:19px;border-radius:23px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);margin-bottom:15px}
+.watch-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.watch-title{font-size:14px;font-weight:750}
+.reward-badge{padding:6px 9px;border-radius:9px;background:rgba(0,230,168,.08);color:#00e6a8;font-size:10px;font-weight:800}
+.watch-button{position:relative;width:100%;min-height:57px;border:0;border-radius:17px;background:linear-gradient(135deg,#00e6a8,#63ffd0);color:#04100c;font-size:14px;font-weight:900;cursor:pointer;box-shadow:0 12px 30px rgba(0,230,168,.14);transition:transform .15s ease,opacity .2s ease}
+.watch-button:active{transform:scale(.97)}
+.watch-button:disabled{opacity:.5;cursor:not-allowed}
+.watch-button.loading .button-text{display:none}
+.spinner{display:none;width:19px;height:19px;margin:auto;border:2px solid rgba(0,0,0,.2);border-top-color:#04100c;border-radius:50%;animation:spin .7s linear infinite}
+.watch-button.loading .spinner{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.auto-ad-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:11px;padding:11px 12px;border-radius:14px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06)}
+.auto-ad-title{font-size:10px;font-weight:800}
+.auto-ad-subtitle{margin-top:3px;color:#68748a;font-size:8px}
+.auto-ad-toggle{display:flex;align-items:center;gap:6px;min-width:58px;justify-content:center;border:1px solid rgba(255,255,255,.1);padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.05);color:#8b96a9;font-size:9px;font-weight:900;cursor:pointer}
+.auto-ad-toggle.on{border-color:rgba(0,230,168,.35);background:rgba(0,230,168,.08);color:#00e6a8}
+.toggle-dot{width:6px;height:6px;border-radius:50%;background:#68748a}
+.auto-ad-toggle.on .toggle-dot{background:#00e6a8;box-shadow:0 0 8px #00e6a8}
+.watch-note{min-height:15px;margin-top:10px;text-align:center;color:#68748a;font-size:10px}
+.section{margin-bottom:15px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.section-title{font-size:14px;font-weight:750}
+.section-meta{color:#69758a;font-size:9px}
+.daily-card{display:flex;align-items:center;gap:12px;padding:15px;border-radius:19px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}
+.daily-icon{width:43px;height:43px;flex-shrink:0;display:grid;place-items:center;border-radius:14px;background:rgba(0,230,168,.08);font-size:19px}
+.daily-content{flex:1;min-width:0}
+.daily-title{font-size:12px;font-weight:750}
+.daily-description{margin-top:3px;color:#69758a;font-size:9px}
+.claim-button{border:1px solid rgba(0,230,168,.25);padding:9px 11px;border-radius:11px;background:rgba(0,230,168,.07);color:#00e6a8;font-size:10px;font-weight:800;cursor:pointer}
+.claim-button:disabled{opacity:.4;cursor:not-allowed}
+.activity-card{padding:7px 15px;border-radius:19px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07)}
+.activity-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.activity-row:last-child{border-bottom:0}
+.activity-left{display:flex;align-items:center;gap:9px;min-width:0}
+.activity-icon{width:31px;height:31px;flex-shrink:0;display:grid;place-items:center;border-radius:10px;background:rgba(255,255,255,.05);font-size:12px}
+.activity-info{min-width:0}
+.activity-title{font-size:10px;font-weight:700}
+.activity-subtitle{margin-top:3px;color:#687489;font-size:8px}
+.activity-reward{color:#00e6a8;font-size:10px;font-weight:800}
+.toast{position:fixed;left:50%;bottom:22px;width:calc(100% - 30px);max-width:480px;padding:13px 15px;transform:translate(-50%,100px);opacity:0;border-radius:14px;background:#151c29;border:1px solid rgba(255,255,255,.1);color:#fff;text-align:center;font-size:11px;transition:.3s ease;z-index:100}
+.toast.show{transform:translate(-50%,0);opacity:1}
+@media(max-width:350px){.app{padding-left:12px;padding-right:12px}.balance-value{font-size:35px}.online{display:none}}
+</style>
+</head>
+
+<body>
+<main class="app">
+<header class="header">
+  <div class="brand">
+    <div class="logo">A</div>
+    <div>
+      <div class="brand-title">AdEarn</div>
+      <div class="brand-subtitle">Watch • Earn • Repeat</div>
+    </div>
+  </div>
+  <div class="online"><span class="online-dot"></span>Online</div>
+</header>
+
+<section class="profile">
+  <div class="avatar" id="avatar">U</div>
+  <div>
+    <div class="profile-name" id="userName">Telegram User</div>
+    <div class="profile-username" id="username">@username</div>
+  </div>
+</section>
+
+<section class="balance-card">
+  <div class="balance-label">Total Balance</div>
+  <div class="balance-value"><span id="points">0</span> <span class="balance-unit">PTS</span></div>
+  <div class="balance-status">● Keep watching to earn more</div>
+</section>
+
+<section class="stats">
+  <div class="stat-card">
+    <div class="stat-icon">▶</div>
+    <div class="stat-number" id="adsWatched">0</div>
+    <div class="stat-label">Ads Watched</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">⚡</div>
+    <div class="stat-number" id="todayAds">0</div>
+    <div class="stat-label">Today's Ads</div>
+  </div>
+</section>
+
+<section class="watch-card">
+  <div class="watch-header">
+    <div class="watch-title">Rewarded Advertisement</div>
+    <div class="reward-badge">+10 PTS</div>
+  </div>
+  <button type="button" class="watch-button" id="watchBtn">
+    <span class="button-text">WATCH AD</span>
+    <span class="spinner"></span>
+  </button>
+
+  <div class="auto-ad-row">
+    <div>
+      <div class="auto-ad-title">Auto Ad Play</div>
+      <div class="auto-ad-subtitle">Try to open the next ad automatically</div>
+    </div>
+    <button type="button" class="auto-ad-toggle" id="autoAdToggle" aria-pressed="false">
+      <span class="toggle-dot"></span>OFF
+    </button>
+  </div>
+
+  <div class="watch-note" id="watchNote"></div>
+</section>
+
+<section class="section">
+  <div class="section-header">
+    <div class="section-title">Daily Reward</div>
+    <div class="section-meta">Every 24 hours</div>
+  </div>
+  <div class="daily-card">
+    <div class="daily-icon">🎁</div>
+    <div class="daily-content">
+      <div class="daily-title">Daily Bonus</div>
+      <div class="daily-description">Claim your daily points</div>
+    </div>
+    <button type="button" class="claim-button" id="claimBtn">+25 PTS</button>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-header">
+    <div class="section-title">Recent Activity</div>
+    <div class="section-meta">Latest</div>
+  </div>
+  <div class="activity-card" id="activity">
+    <div class="activity-row">
+      <div class="activity-left">
+        <div class="activity-icon">ℹ</div>
+        <div class="activity-info">
+          <div class="activity-title">Welcome to AdEarn</div>
+          <div class="activity-subtitle">Start earning points</div>
+        </div>
+      </div>
+      <div class="activity-reward">+0</div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const tg = window.Telegram?.WebApp;
+
+if (tg) {
+  tg.ready();
+  tg.expand();
+  try {
+    tg.setHeaderColor("#070a10");
+    tg.setBackgroundColor("#070a10");
+  } catch (e) {}
+}
+
+const pointsEl = document.getElementById("points");
+const adsWatchedEl = document.getElementById("adsWatched");
+const todayAdsEl = document.getElementById("todayAds");
+const watchBtn = document.getElementById("watchBtn");
+const watchNote = document.getElementById("watchNote");
+const claimBtn = document.getElementById("claimBtn");
+const activity = document.getElementById("activity");
+const toast = document.getElementById("toast");
+const autoAdToggle = document.getElementById("autoAdToggle");
+
+let points = 0;
+let adsWatched = 0;
+let todayAds = 0;
+
+const AD_REWARD = 10;
+const DAILY_REWARD = 25;
+
+let autoAdEnabled = localStorage.getItem("adearn_auto_ad") === "1";
+let autoAdTimer = null;
+let adBusy = false;
+
+function loadTelegramUser() {
+  const user = tg?.initDataUnsafe?.user;
+  if (!user) return;
+
+  const name = [user.first_name, user.last_name]
+    .filter(Boolean)
+    .join(" ");
+
+  document.getElementById("userName").textContent =
+    name || "Telegram User";
+
+  document.getElementById("username").textContent =
+    user.username ? "@" + user.username : "Telegram account";
+
+  document.getElementById("avatar").textContent =
+    (user.first_name || "U").charAt(0).toUpperCase();
+}
+
+function updateUI() {
+  pointsEl.textContent = points.toLocaleString();
+  adsWatchedEl.textContent = adsWatched;
+  todayAdsEl.textContent = todayAds;
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  clearTimeout(showToast.timer);
+
+  showToast.timer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2500);
+}
+
+function addActivity(title, subtitle, reward) {
+  const row = document.createElement("div");
+  row.className = "activity-row";
+
+  row.innerHTML = `
+    <div class="activity-left">
+      <div class="activity-icon">✓</div>
+      <div class="activity-info">
+        <div class="activity-title">${title}</div>
+        <div class="activity-subtitle">${subtitle}</div>
+      </div>
+    </div>
+    <div class="activity-reward">+${reward}</div>
+  `;
+
+  activity.prepend(row);
+
+  while (activity.children.length > 5) {
+    activity.lastElementChild.remove();
+  }
+}
+
+function updateAutoAdUI() {
+  autoAdToggle.classList.toggle("on", autoAdEnabled);
+  autoAdToggle.setAttribute("aria-pressed", String(autoAdEnabled));
+  autoAdToggle.innerHTML =
+    `<span class="toggle-dot"></span>${autoAdEnabled ? "ON" : "OFF"}`;
+}
+
+autoAdToggle.addEventListener("click", () => {
+  autoAdEnabled = !autoAdEnabled;
+  localStorage.setItem("adearn_auto_ad", autoAdEnabled ? "1" : "0");
+  updateAutoAdUI();
+
+  if (autoAdEnabled) {
+    showToast("⚡ Auto Ad enabled — press WATCH AD to start");
+    clearTimeout(autoAdTimer);
+  } else {
+    clearTimeout(autoAdTimer);
+    showToast("Auto Ad disabled");
+  }
+});
+
+function scheduleAutoAd(delay = 900) {
+  clearTimeout(autoAdTimer);
+  if (!autoAdEnabled || adBusy) return;
+
+  autoAdTimer = setTimeout(() => {
+    if (!autoAdEnabled || adBusy) return;
+    openRewardedAd(true);
+  }, delay);
+}
+
+async function openRewardedAd(isAuto = false) {
+  if (adBusy) return;
+
+  adBusy = true;
+  watchBtn.disabled = true;
+  watchBtn.classList.add("loading");
+  watchNote.textContent = isAuto
+    ? "Opening next advertisement..."
+    : "Loading advertisement...";
+
+  let completed = false;
+
+  try {
+    if (typeof window.show_11822707 !== "function") {
+      throw new Error("Monetag SDK function is not available.");
+    }
+
+    // The SDK promise normally resolves after the rewarded ad is closed
+    // / the user returns to the WebView.
+    await window.show_11822707();
+    completed = true;
+
+    // Client-side demo reward. Production should verify completion on backend.
+    points += AD_REWARD;
+    adsWatched += 1;
+    todayAds += 1;
+    updateUI();
+
+    addActivity("Advertisement completed", "Reward credited", AD_REWARD);
+    watchNote.textContent = "Advertisement completed ✓";
+    showToast(`🎉 +${AD_REWARD} points added!`);
+  } catch (error) {
+    console.log("Advertisement error:", error);
+    watchNote.textContent = "Ad unavailable. Retrying when possible...";
+    if (!isAuto) {
+      showToast("Advertisement unavailable. Try again.");
+    }
+  } finally {
+    adBusy = false;
+    watchBtn.disabled = false;
+    watchBtn.classList.remove("loading");
+
+    // AUTO LOOP:
+    // If Auto Ad is ON, wait briefly after returning from the ad and
+    // try opening the next ad. A failure is retried with a longer delay.
+    if (autoAdEnabled) {
+      const nextDelay = completed ? 1200 : 5000;
+      watchNote.textContent = completed
+        ? "Next ad will open automatically..."
+        : "Waiting to retry the next ad...";
+      scheduleAutoAd(nextDelay);
+    } else if (completed) {
+      watchNote.textContent = "Advertisement completed ✓";
+    }
+  }
+}
+
+watchBtn.addEventListener("click", () => {
+  // First WATCH AD click provides the user gesture needed by many WebViews.
+  // When Auto Ad is ON, subsequent ads are attempted automatically.
+  openRewardedAd(false);
+});
+
+updateAutoAdUI();
+
+claimBtn.addEventListener("click", () => {
+  const lastClaim = localStorage.getItem("adearn_daily_claim");
+  const now = Date.now();
+
+  if (
+    lastClaim &&
+    now - Number(lastClaim) < 24 * 60 * 60 * 1000
+  ) {
+    showToast("⏳ Daily reward is not available yet.");
+    return;
+  }
+
+  points += DAILY_REWARD;
+
+  localStorage.setItem(
+    "adearn_daily_claim",
+    String(now)
+  );
+
+  updateUI();
+
+  addActivity(
+    "Daily reward",
+    "Daily bonus claimed",
+    DAILY_REWARD
+  );
+
+  claimBtn.disabled = true;
+  claimBtn.textContent = "Claimed";
+
+  showToast(`🎁 +${DAILY_REWARD} points added!`);
+});
+
+function checkDailyReward() {
+  const lastClaim =
+    localStorage.getItem("adearn_daily_claim");
+
+  if (!lastClaim) return;
+
+  const available =
+    Date.now() - Number(lastClaim) >=
+    24 * 60 * 60 * 1000;
+
+  if (!available) {
+    claimBtn.disabled = true;
+    claimBtn.textContent = "Claimed";
+  }
+}
+
+loadTelegramUser();
+checkDailyReward();
+updateUI();
+updateAutoAdUI();
+
+// Auto Ad starts from the user's WATCH AD click.
+// After the ad closes/returns, the loop continues while Auto Ad is ON.
+</script>
+</body>
+</html>
